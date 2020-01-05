@@ -130,3 +130,4 @@ dmypy.json
 #IDE's
 .idea/
 .vscode/
+logs/

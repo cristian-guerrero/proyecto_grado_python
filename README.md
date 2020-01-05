@@ -6,4 +6,10 @@ Parte del proyecto de grado de Cristian Mauricio Guerrero Chavez, realizada en p
 
 ## Librerias utilizadas
 
-## 
+## Instalación 
+### para instalar las dependencias se debe ejecutar el siguiente comando:
+
+`pip install -r requirements.txt`
+
+
+## Requerimientos
