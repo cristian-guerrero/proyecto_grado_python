@@ -12,6 +12,7 @@ default_keys = [
 
 
 def set_os_env(values):
+  ''' Crear las variables de entorno en el sistema '''
   if type(values) is not dict:
     raise ValueError(
       'Se require un diccionario para establecer las variables de entorno en el sistema operativo')
@@ -23,6 +24,7 @@ def set_os_env(values):
 
 
 def load_env_file():
+  ''' Lee el archivo .env lo procesa y crea las variables de entorno en el sistema'''
   path = '.env'
   splitter = '='
   if not os.path.isfile(path):
@@ -44,6 +46,7 @@ def load_env_file():
 
 
 def check_keys_in_dic(keys, dictionary):
+  ''' Verifica si una clave no existe en un diccionario y la agrega '''
   result = []
   for k in keys:
     if k not in dictionary:
