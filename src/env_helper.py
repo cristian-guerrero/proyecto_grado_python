@@ -12,7 +12,10 @@ default_keys = [
 
 
 def set_os_env(values):
-  ''' Crear las variables de entorno en el sistema '''
+  '''
+  Crear las variables de entorno en el sistema
+  recibe un dicionario de como parametro
+  '''
   if type(values) is not dict:
     raise ValueError(
       'Se require un diccionario para establecer las variables de entorno en el sistema operativo')

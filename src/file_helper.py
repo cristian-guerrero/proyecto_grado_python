@@ -6,7 +6,6 @@ from os import listdir
 import json
 
 
-
 def file_name():
   ''' Crear un nombre de archivo añadiendole el timestamp del sistema '''
   return 'sniff_' + timestamp_str() + '.json'
@@ -16,7 +15,6 @@ def timestamp_str():
   ''' Devuelte un timestamp en formato de string  '''
   now = datetime.now()
   return str(int(datetime.timestamp(now)))
-
 
 
 def new_file():
