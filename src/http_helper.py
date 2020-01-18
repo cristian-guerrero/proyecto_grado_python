@@ -65,11 +65,12 @@ def check_token():
 
 
 def get_sniffer_config():
-  ''' Recupera la configuración del sniffer almacenda en el backend de parse '''
+  '''
+  Recupera la configuración del sniffer almacenda en el backend de parse
+  '''
   result = post_data({'token': os.environ['PARSE_SNIFFER_TOKEN']},
                      os.environ['PARSE_SNIFFER_CONFIG'])
 
-  print (result.get('result'))
   return result.get('result')
   # todo verificar si retorna un error
 

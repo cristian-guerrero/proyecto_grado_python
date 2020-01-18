@@ -4,6 +4,7 @@ import os
 from os.path import isfile, join
 from os import listdir
 import json
+from sys import getsizeof
 
 
 def file_name():
@@ -55,3 +56,16 @@ def write_json_to_file(data, file):
 def read_json_from_file(file):
   ''' Lee un archivo y devuelve su contenido en formato json '''
   return json.load(file)
+
+
+def var_size(data):
+  '''
+  Devuelve al tamaño que ocupa una variable en memoria en Mbs
+  :param data:
+  :return:
+  '''
+  size_in_bytes = getsizeof(data)
+  #print(size_in_bytes)
+  # tamaño en megabites
+  # return round(size_in_bytes * 2**-20, 6)
+  return round(size_in_bytes * 1024 ** -2, 6)
