@@ -1,26 +1,32 @@
-from scapy.all import *
-from scapy.layers.inet import IP, TCP
-from scapy.layers.l2 import ARP
+import  scapy.all  as scapy
+#from scapy.layers.inet import IP, ICMP
+#from scapy.layers.l2 import ARP
+
+#from scapy.layers import  inet, l2
 
 import platform
 
 
 print (platform.system() )
 
+if platform.system() != 'linux':
+  pass
 
-import psutil
 
-addrs = psutil.net_if_addrs()
-print(addrs.keys())
+
+
+#import psutil
+
+#addrs = psutil.net_if_addrs()
+#print(addrs.keys())
 
 
 # netifaces==0.10.8
 # psutil==5.6.7
 
 
-
 def arp_monitor_callback(pkt):
-  if ARP in pkt and pkt[ARP].op in (1, 2):  # who-has or is-at
+  if scapy.ARP in pkt and pkt[scapy.bind_layers.ARP].op in (1, 2):  # who-has or is-at
     return pkt.sprintf("%ARP.hwsrc% %ARP.psrc%")
 
 
@@ -28,12 +34,12 @@ def arp_monitor_callback(pkt):
 
 
 def packet_callback(packet):
-  if packet[TCP].payload:
-    pkt = str(packet[TCP].payload)
+  if packet[scapy.TCP].payload:
+    pkt = str(packet[scapy.TCP].payload)
     # if packet[IP].dst == '192.168.1.10':
-    print("\n{} ----HTTP----> {}:{}:\n{}".format(packet[IP].src, packet[IP].dst, packet[IP].dport,
-                                                 str(bytes(packet[TCP].payload))))
+    print("\n{} ----HTTP----> {}:{}:\n{}".format(packet[scapy.IP].src, packet[scapy.IP].dst, packet[scapy.IP].dport,
+                                                 str(bytes(packet[scapy.TCP].payload))))
 
 
-sniff( filter="tcp", prn=packet_callback, store=0, )
-#sniff(iface='en0', filter="tcp", prn=packet_callback, store=0)
+# sniff( filter="tcp", prn=packet_callback, store=0, )
+# scapy.sniff(iface='wlp7s0', filter="tcp", prn=packet_callback, store=0)
