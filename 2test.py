@@ -42,4 +42,46 @@ def packet_callback(packet):
 
 
 # sniff( filter="tcp", prn=packet_callback, store=0, )
-# scapy.sniff(iface='wlp7s0', filter="tcp", prn=packet_callback, store=0)
+## ejemplo de como se debe ver un filtro
+#sniffed = scapy.sniff(iface='enp0s3', filter="tcp &&  (src host 192.168.1.15 || dst host 192.168.1.15)", prn=packet_callback, store=0)
+
+
+
+# ejemplo de como salir del sniff con un evento de hilo
+import time, threading
+e = threading.Event()
+def _sniff(e):
+  a = scapy.sniff(iface=None,filter="tcp port 443", stop_filter=lambda p: e.is_set())
+  print("Stopped after %i packets" % len(a))
+
+print("Start capturing thread")
+t = threading.Thread(target=_sniff, args=(e,))
+t.start()
+
+time.sleep(3)
+print("Try to shutdown capturing...")
+e.set()
+
+# This will run until you send a HTTP request somewhere
+# There is no way to exit clean if no package is received
+while True:
+  t.join(2)
+  if t.is_alive():
+    print("Thread is still running...")
+  else:
+    break
+
+print("Shutdown complete!")
+
+
+## ejemplo sencillo
+
+interface = None
+
+def print_packet(packet):
+  ip_layer = packet.getlayer(scapy.IP)
+  print("[!] New Packet: {src} -> {dst}".format(src=ip_layer.src, dst=ip_layer.dst))
+
+print("[*] Start sniffing...")
+scapy.sniff(iface=interface, filter="ip", prn=print_packet)
+print("[*] Stop sniffing")

@@ -47,3 +47,20 @@ def send_data(data):
   print('')
 
 
+def stopfilter(x):
+  '''
+  Funcion para detener el sniffer cuando la condicion se cumpla
+  sniff(iface="wlan0", filter='tcp', stop_filter=stopfilter)
+
+  :param x:
+  :return:
+  '''
+  return False
+
+def build_filter():
+  pass
+
+# ipsDestino == dst
+# ipsOrigin == src
+# and ==  and (&&)
+# or == or (||)
