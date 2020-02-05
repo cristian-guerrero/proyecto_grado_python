@@ -8,7 +8,9 @@ import scapy.all  as scapy
 from threading import Thread, Event
 from time import sleep
 
-from src.file_helper import File_helper, new_file, write_json_to_file, list_files, read_json_from_file, var_size
+from src.file_helper import File_helper
+
+import  base64
 
 import platform
 
@@ -171,34 +173,37 @@ class Sniffer(Thread):
     # print('[!] New Packet: {src} -> {dst}'.format(src=ip_layer.src, dst=ip_layer.dst))
 
   def format_package(self, packet):
-    '''
     ip_layer = packet.getlayer(scapy.IP)
-    raw_layer = packet.getlayer(scapy.Raw)
-    tcp_layer = packet.getlayer(scapy.TCP)
-    udp_layer = packet.getlayer(scapy.UDP)
 
-    if packet.haslayer(scapy.TCP):
-      sport = tcp_layer.sport
-      dport = tcp_layer.dport
-    elif  packet.haslayer(scapy.UDP) :
-      dport = udp_layer.dport
-      sport = udp_layer.sport
-    else:
-      sport = ''
-      dport= ''
-    '''
 
     # packet_load = raw_layer.load  if raw_layer and raw_layer.load else None
     #packet_load = raw_layer.load if packet.haslayer(scapy.Raw) else None
 
-    print(packet.load)
-    print(packet.dport)
+    #print(packet.load)
+    #print(packet.dport)
+    #encodedBytes = base64.b64encode(packet.load.encode("utf-8"))
+    #encodedStr = str(encodedBytes, "utf-8")
+
+    # muestra toda la información del paquete
+    packet.show()
+
+    #print (packet.payload)
+
+    if packet.haslayer(scapy.IP):
+      src = ip_layer.src
+      dst = ip_layer.dst
+    else :
+      src = packet.src
+      dst = packet.dst
     return {
-      'src': packet.src,
-      'dst': packet.dst,
+      'src': src,
+      'dst': dst,
       'sport': packet.sport,
       'dport': packet.dport,
-      # 'raw': packet_load
+      'proto': packet.proto,
+      'time': int( packet.time)
+      # 'raw': packet_load,
+      #'load_base64': encodedStr
     }
 
 
