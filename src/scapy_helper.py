@@ -5,10 +5,13 @@ import os
 from os import listdir
 from os.path import isfile, join
 from sys import getsizeof
-from scapy.all import *
+#from scapy.all import *
+import scapy.all  as scapy
 
 from src.file_helper import new_file, write_json_to_file, list_files, read_json_from_file, var_size
 
+from threading import Thread, Event
+from time import sleep
 
 
 
