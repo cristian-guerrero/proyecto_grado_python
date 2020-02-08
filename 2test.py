@@ -10,6 +10,8 @@ from time import sleep
 
 from src.file_helper import File_helper
 
+from src.packet_helper import  Packet_helper
+
 import  base64
 
 import platform
@@ -185,7 +187,14 @@ class Sniffer(Thread):
     #encodedStr = str(encodedBytes, "utf-8")
 
     # muestra toda la información del paquete
-    packet.show()
+    show_data = packet.show(dump = True )
+
+    print (type(show_data))
+
+
+    #helper = Packet_helper(packet)
+    # print(Packet_helper(packet)())
+    #packet_json = helper.packet_to_json()
 
     #print (packet.payload)
 
@@ -201,7 +210,8 @@ class Sniffer(Thread):
       'sport': packet.sport,
       'dport': packet.dport,
       'proto': packet.proto,
-      'time': int( packet.time)
+      'time': int( packet.time),
+      'info': Packet_helper(packet)()
       # 'raw': packet_load,
       #'load_base64': encodedStr
     }
