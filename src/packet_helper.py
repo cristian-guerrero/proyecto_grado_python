@@ -1,3 +1,7 @@
+
+from scapy.layers.http import HTTPRequest, HTTPResponse
+
+
 class Packet_helper():
 
   def __init__(self, packet):

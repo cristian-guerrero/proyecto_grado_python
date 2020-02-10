@@ -1,5 +1,8 @@
 import scapy.all  as scapy
 from scapy.layers.http import HTTPRequest, HTTPResponse
+
+scapy.load_layer("http")
+
 # from scapy.layers.inet import IP, ICMP
 # from scapy.layers.l2 import ARP
 
@@ -156,7 +159,8 @@ class Sniffer(Thread):
       opened_socket=self.socket,
       prn=self.print_packet,
       stop_filter=self.should_stop_sniffer,
-      filter="tcp &&  (src host 192.168.1.15 || dst host 192.168.1.15)"
+      #filter="tcp &&  (src host 192.168.1.15 || dst host 192.168.1.15)"
+      filter=""
     )
 
   def join(self, timeout=None):
@@ -209,8 +213,22 @@ class Sniffer(Thread):
       src = packet.src
       dst = packet.dst
     #print ('src port: {} -- dst port: {}'.format(packet.sport or  '' ,packet.dport or '' ))
-    print (packet.haslayer(HTTPResponse))
+    #print (packet.haslayer(HTTPResponse))
 
+    if packet.haslayer(HTTPRequest):
+      print ('------------------- request  -------------------')
+      packet.show()
+      '''
+      url = self.get_url(packet)
+      print("[+] Http Request >> " + url)
+      credentials = self.get_credentials(packet)
+      if credentials:
+        print("[+] Possible username/passowrd " + credentials + "\n\n")
+      '''
+
+      if packet.haslayer(HTTPResponse):
+        print ('------------------- response -------------------')
+        packet.show()
     return {
       'src': src,
       'dst': dst,
@@ -222,6 +240,19 @@ class Sniffer(Thread):
       # 'raw': packet_load,
       #'load_base64': encodedStr
     }
+
+  def get_url(self, packet):
+    return packet[HTTPRequest].Host + packet[HTTPRequest].Path
+
+
+  def get_credentials(self,packet):
+    if packet.haslayer(scapy.Raw):
+      load = packet[scapy.Raw].load
+      keywords = ["login", "password", "username", "user", "pass"]
+      for keyword in keywords:
+        if keyword in load:
+          return load
+
 
 
 class Sniffer_config():
