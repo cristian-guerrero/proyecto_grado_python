@@ -1,4 +1,5 @@
 import scapy.all  as scapy
+from scapy.layers.http import HTTPRequest, HTTPResponse
 # from scapy.layers.inet import IP, ICMP
 # from scapy.layers.l2 import ARP
 
@@ -187,9 +188,9 @@ class Sniffer(Thread):
     #encodedStr = str(encodedBytes, "utf-8")
 
     # muestra toda la información del paquete
-    show_data = packet.show(dump = True )
+    # show_data = packet.show(dump = True )
 
-    print (type(show_data))
+    #print (type(show_data))
 
 
     #helper = Packet_helper(packet)
@@ -198,17 +199,23 @@ class Sniffer(Thread):
 
     #print (packet.payload)
 
+
+    #packet.show()
+
     if packet.haslayer(scapy.IP):
       src = ip_layer.src
       dst = ip_layer.dst
     else :
       src = packet.src
       dst = packet.dst
+    #print ('src port: {} -- dst port: {}'.format(packet.sport or  '' ,packet.dport or '' ))
+    print (packet.haslayer(HTTPResponse))
+
     return {
       'src': src,
       'dst': dst,
-      'sport': packet.sport,
-      'dport': packet.dport,
+      'sport': packet.sport or  '' ,
+      'dport': packet.dport or '',
       'proto': packet.proto,
       'time': int( packet.time),
       'info': Packet_helper(packet)()
