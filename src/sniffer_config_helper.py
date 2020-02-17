@@ -6,9 +6,13 @@
 from src.env_helper import  set_os_env
 
 def check_config(config):
-  pass
+
+  if not config['sessionId']:
+    raise Exception('El backend no devolvio el sessionId')
 
 
 def set_session_id(config ) :
-  set_os_env({'PARSE_SESSION_ID': config['session']})
+  print(config['sessionId'])
+  check_config(config)
+  set_os_env({'PARSE_SESSION_ID': config['sessionId']})
 

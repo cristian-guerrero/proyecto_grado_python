@@ -3,6 +3,8 @@ import os
 import json
 from urllib.error import HTTPError
 
+from src.file_helper import File_helper
+
 
 def parse_headers():
   ''' Retorna los headers necesarios para realizar la peticion a perse server '''
@@ -73,6 +75,22 @@ def get_sniffer_config():
 
   return result.get('result')
   # todo verificar si retorna un error
+
+
+def save_details(file):
+
+  print ('file name -------------------->' + file.file_name)
+  json = file.read_json_from_file(file.file_name)
+
+
+  data = {
+    'sessionId': os.environ['PARSE_SESSION_ID'],
+    'data': json
+  }
+
+  result = post_data(data , os.environ['PARSE_FUNCTION'])
+
+  print (result)
 
 # para eliminar una variable de entorno
 # del  os.environ['PARSE_SNIFFER_TOKEN']

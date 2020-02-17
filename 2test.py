@@ -20,6 +20,19 @@ import  base64
 
 import platform
 
+
+
+
+from src.env_helper import main as env_main, set_os_env
+from src.http_helper import get_sniffer_config, save_details
+from src.sniffer_config_helper import check_config, set_session_id
+from src.scapy_helper import run_sniffing
+
+
+
+
+
+
 print(platform.system())
 
 if platform.system() != 'linux':
@@ -265,26 +278,50 @@ class Sniffer_config():
     pass
 
 
-sniffer = Sniffer()
-print('[*] Start sniffing…')
-sniffer.start()
+def run ():
 
-try:
-  while True:
-    sleep(100)
-except KeyboardInterrupt:
-  print('[*] Stop sniffing')
-  # print(sniffer.current_data)
-  print('------------------------- start  write  data ----------------------------')
-  file = File_helper(sniffer.current_data)
-  file.start()
-  print(file.file_name)
-  # print(file.is_alive())
-  # print (file.list_files())
-  print('------------------------- end  write  data ----------------------------')
 
-  sniffer.join(2.0)
-  if sniffer.is_alive():
-    sniffer.socket.close()
 
-print(scapy.IP)
+  env_main()
+  sniffer_config = get_sniffer_config()
+
+  print(sniffer_config)
+  set_session_id(sniffer_config)
+
+  check_config(sniffer_config)
+  # set_config_to_env(sniffer_config)
+  run_sniffing(sniffer_config)
+
+
+
+
+  sniffer = Sniffer()
+  print('[*] Start sniffing…')
+  sniffer.start()
+
+
+
+  try:
+    while True:
+      sleep(100)
+  except KeyboardInterrupt:
+    print('[*] Stop sniffing')
+    # print(sniffer.current_data)
+    print('------------------------- start  write  data ----------------------------')
+    file = File_helper(sniffer.current_data)
+    file.start()
+    file.join()
+    print(file.file_name)
+    # print(file.is_alive())
+    # print (file.list_files())
+    print('------------------------- end  write  data ----------------------------')
+
+    sniffer.join(2.0)
+    if sniffer.is_alive():
+      sniffer.socket.close()
+
+    save_details(file)
+  print(scapy.IP)
+
+
+run()

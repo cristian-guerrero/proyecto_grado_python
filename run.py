@@ -14,6 +14,7 @@ def run():
   env_main()
   sniffer_config = get_sniffer_config()
 
+  print(sniffer_config)
   set_session_id(sniffer_config)
 
   check_config(sniffer_config)

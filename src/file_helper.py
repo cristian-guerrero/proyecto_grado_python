@@ -122,7 +122,8 @@ class File_helper(Thread):
     #self.join()
     # json.dump(data, file)
 
-  def read_json_from_file(file):
+  def read_json_from_file(self, file_name):
+    file  = open(file_name, "r")
     ''' Lee un archivo y devuelve su contenido en formato json '''
     return json.load(file)
 
