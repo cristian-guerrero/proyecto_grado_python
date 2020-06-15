@@ -20,17 +20,11 @@ from time import sleep
 
 
 def run_sniffing(config):
+
+  print ('run_sniffing' , config)
   f = new_file()
 
   data = {}
-  for i in range(10000):
-    data_t = 'data {}'.format(i)
-    data[data_t] = []
-    data[data_t].append({
-      'name': 'Tim',
-      'website': 'apple.com',
-      'from': 'Alabama'
-    })
 
   print(var_size(data))
 

@@ -153,12 +153,14 @@ except KeyboardInterrupt:
 # ejemplo sniffer en clase e hilo con salida
 
 class Sniffer(Thread):
-  def __init__(self, interface=None):
+  def __init__(self, interface=None, config= None):
     super().__init__()
     self.daemon = True
     self.socket = None
     self.interface = interface
     self.stop_sniffer = Event()
+
+    self.config = config
     #
     self.current_data = []
 
@@ -173,8 +175,16 @@ class Sniffer(Thread):
       prn=self.print_packet,
       stop_filter=self.should_stop_sniffer,
       #filter="tcp &&  (src host 192.168.1.15 || dst host 192.168.1.15)"
-      filter=""
+      filter="",
+      store=0
     )
+
+
+  def set_config(self):
+    '''
+      filter config
+    '''
+    
 
   def join(self, timeout=None):
     self.stop_sniffer.set()
@@ -188,11 +198,22 @@ class Sniffer(Thread):
 
     p = self.format_package(packet)
 
-    self.current_data.append(p)
+    if p is not None:
+      self.current_data.append(p)
+    else:
+      print ('package sport is None')
     # print (p)
     # print('[!] New Packet: {src} -> {dst}'.format(src=ip_layer.src, dst=ip_layer.dst))
 
   def format_package(self, packet):
+
+    if not hasattr(packet ,'sport'):
+      # print (packet)
+      
+      return {
+        'info': Packet_helper(packet)()
+      }
+
     ip_layer = packet.getlayer(scapy.IP)
 
 
@@ -245,8 +266,8 @@ class Sniffer(Thread):
     return {
       'src': src,
       'dst': dst,
-      'sport': packet.sport or  '' ,
-      'dport': packet.dport or '',
+      'sport': packet and packet.sport or  '' ,
+      'dport': packet and packet.dport or '',
       'proto': packet.proto,
       'time': int( packet.time),
       'info': Packet_helper(packet)()
@@ -278,50 +299,65 @@ class Sniffer_config():
     pass
 
 
+def stop_sniffer(sniffer, file):
+  sniffer.join(2.0)
+  if sniffer.is_alive():
+      sniffer.socket.close()
+  save_details(file)
+  
+def save_file (sniffer):
+  print('------------------------- start  write  data ----------------------------')
+  file = File_helper(sniffer.current_data)
+  file.start()
+  file.join()
+  print(file.file_name)
+  # print(file.is_alive())
+  # print (file.list_files())
+  print('------------------------- end  write  data ----------------------------')
+  return file
+
+
 def run ():
-
-
 
   env_main()
   sniffer_config = get_sniffer_config()
+  time_out = None
+  if   'time' in sniffer_config:
+    time_out= sniffer_config.get('time')
+    
 
-  print(sniffer_config)
   set_session_id(sniffer_config)
 
   check_config(sniffer_config)
   # set_config_to_env(sniffer_config)
   run_sniffing(sniffer_config)
 
-
-
-
   sniffer = Sniffer()
   print('[*] Start sniffing…')
   sniffer.start()
 
-
-
   try:
     while True:
-      sleep(100)
+      if(time_out is not None and time_out <= 0):
+        raise KeyboardInterrupt
+      
+      if time_out is not None:
+        time_out -= 1
+        print(time_out)
+      sleep(1)
   except KeyboardInterrupt:
     print('[*] Stop sniffing')
-    # print(sniffer.current_data)
-    print('------------------------- start  write  data ----------------------------')
-    file = File_helper(sniffer.current_data)
-    file.start()
-    file.join()
-    print(file.file_name)
-    # print(file.is_alive())
-    # print (file.list_files())
-    print('------------------------- end  write  data ----------------------------')
-
+    file = save_file(sniffer)
+    '''
     sniffer.join(2.0)
     if sniffer.is_alive():
       sniffer.socket.close()
-
     save_details(file)
-  print(scapy.IP)
+    '''
+    stop_sniffer(sniffer, file)
+  # print(scapy.IP)
 
 
 run()
+
+#raise KeyboardInterrupt

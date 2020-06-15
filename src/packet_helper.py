@@ -12,6 +12,8 @@ class Packet_helper():
     output = []
     for layer in self.get_packet_layers():
       layer_name = layer.name if layer.name else layer.__name__
+
+      if   self.is_black_layer(layer_name) : continue
       # output.append({layer_name: self.})
       output.append({layer_name: self._serialize_fields(layer, {})})
     return output
@@ -44,3 +46,14 @@ class Packet_helper():
 
       yield layer
       counter += 1
+
+  def is_black_layer (self, layer_name):
+    
+    if layer_name == 'UDP' or layer_name ==  'Ethernet' or layer_name == 'Padding': return True
+    # if layer_name == 'IP Option Router Alert': return True
+    '''
+    if layer_name == 'DNS Resource Record' or layer_name == 'DNS' or layer_name == 'DNS EDNS0 TLV' : return True
+    if layer_name == 'DNS Question Record' or layer_name == 'DNS SRV Resource Record': return True
+    if layer_name == 'DNS OPT Resource Record' or layer_name == 'DNS NSEC Resource Record': return True
+    '''
+    return False
